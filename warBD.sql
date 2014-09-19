@@ -2,6 +2,11 @@ SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
+-- -----------------------------------------------------
+-- Schema WarBD
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `WarBD` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
+USE `WarBD` ;
 
 -- -----------------------------------------------------
 -- Table `WarBD`.`Jogador`
@@ -38,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `WarBD`.`Mapa` (
   CONSTRAINT `fk_Mapa_Partida1`
     FOREIGN KEY (`Partida_id`)
     REFERENCES `WarBD`.`Partida` (`id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -56,7 +61,7 @@ CREATE TABLE IF NOT EXISTS `WarBD`.`Objetivo` (
   CONSTRAINT `fk_Objetivo_Mapa1`
     FOREIGN KEY (`Mapa_id`)
     REFERENCES `WarBD`.`Mapa` (`id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -66,16 +71,15 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `WarBD`.`Continente` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `Continentecol` VARCHAR(45) NOT NULL,
-  `Continentecol1` VARCHAR(45) NOT NULL,
+  `nome` VARCHAR(20) NOT NULL,
   `Mapa_id` INT NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `Continentecol_UNIQUE` (`Continentecol` ASC),
+  UNIQUE INDEX `Continentecol_UNIQUE` (`nome` ASC),
   INDEX `fk_Continente_Mapa1_idx` (`Mapa_id` ASC),
   CONSTRAINT `fk_Continente_Mapa1`
     FOREIGN KEY (`Mapa_id`)
     REFERENCES `WarBD`.`Mapa` (`id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -87,13 +91,14 @@ CREATE TABLE IF NOT EXISTS `WarBD`.`Pais` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `nome` VARCHAR(45) NOT NULL,
   `Continente_id` INT NOT NULL,
+  `coordenada` POINT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `nome_UNIQUE` (`nome` ASC),
   INDEX `fk_Pais_Continente1_idx` (`Continente_id` ASC),
   CONSTRAINT `fk_Pais_Continente1`
     FOREIGN KEY (`Continente_id`)
     REFERENCES `WarBD`.`Continente` (`id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -110,7 +115,7 @@ CREATE TABLE IF NOT EXISTS `WarBD`.`Carta` (
   CONSTRAINT `fk_Carta_Pais1`
     FOREIGN KEY (`Pais_id`)
     REFERENCES `WarBD`.`Pais` (`id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -129,17 +134,17 @@ CREATE TABLE IF NOT EXISTS `WarBD`.`Joga` (
   CONSTRAINT `fk_Partida_has_Jogador_Partida`
     FOREIGN KEY (`Partida_id`)
     REFERENCES `WarBD`.`Partida` (`id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Partida_has_Jogador_Jogador1`
     FOREIGN KEY (`Jogador_id`)
     REFERENCES `WarBD`.`Jogador` (`id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Joga_Objetivo1`
     FOREIGN KEY (`Objetivo_id`)
     REFERENCES `WarBD`.`Objetivo` (`id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -156,12 +161,12 @@ CREATE TABLE IF NOT EXISTS `WarBD`.`Paises_Vizinhos` (
   CONSTRAINT `fk_Pais_has_Pais_Pais1`
     FOREIGN KEY (`Pais_id`)
     REFERENCES `WarBD`.`Pais` (`id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Pais_has_Pais_Pais2`
     FOREIGN KEY (`Pais_id1`)
     REFERENCES `WarBD`.`Pais` (`id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -179,12 +184,12 @@ CREATE TABLE IF NOT EXISTS `WarBD`.`Jog_Paises` (
   CONSTRAINT `fk_Joga_has_Pais_Joga1`
     FOREIGN KEY (`Joga_Partida_id` , `Joga_Jogador_id`)
     REFERENCES `WarBD`.`Joga` (`Partida_id` , `Jogador_id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Joga_has_Pais_Pais1`
     FOREIGN KEY (`Pais_id`)
     REFERENCES `WarBD`.`Pais` (`id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -202,12 +207,12 @@ CREATE TABLE IF NOT EXISTS `WarBD`.`Jog_Carta` (
   CONSTRAINT `fk_Joga_has_Carta_Joga1`
     FOREIGN KEY (`Joga_Partida_id` , `Joga_Jogador_id`)
     REFERENCES `WarBD`.`Joga` (`Partida_id` , `Jogador_id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Joga_has_Carta_Carta1`
     FOREIGN KEY (`Carta_id`)
     REFERENCES `WarBD`.`Carta` (`id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
